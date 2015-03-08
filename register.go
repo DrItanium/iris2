@@ -18,7 +18,12 @@
 //
 package iris2
 
+const (
+	RegisterCount = 256
+)
+
 type Register Word
+type RegisterFile [RegisterCount]Register
 
 func (this Register) UpperHalf() HalfWord {
 	return HalfWord(this >> 32)

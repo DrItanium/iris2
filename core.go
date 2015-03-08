@@ -23,23 +23,19 @@ package iris2
 
 type MemorySpace []byte
 
-const (
-	RegisterCount      = 256
-	InstructionPointer = 0
-	StackPointer       = 1
-)
-
 type Core struct {
-	Registers [RegisterCount]Register
-	Memory    []byte
+	//	Registers [RegisterCount]Register
+	Memory []byte
 }
 
 func NewCore(memorySize uint) *Core {
 	var c Core
 	// initialize the registers
-	for i := 0; i < RegisterCount; i++ {
-		c.Registers[i] = 0
-	}
+	/*
+		for i := 0; i < RegisterCount; i++ {
+			c.Registers[i] = 0
+		}
+	*/
 	// construct the raw memory we are going to be using
 	c.Memory = make([]byte, memorySize)
 	return &c
