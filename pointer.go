@@ -26,17 +26,24 @@ import (
 )
 
 type Pointer struct {
-	buffer *bytes.Reader
+	raw     []byte
+	Address Word
 }
 
-//func NewPointer(
-func (this *Pointer) ReadByte() (byte, error) {
-	return this.buffer.ReadByte()
+func NewPointer(rawPtr []byte, address Word) *Pointer {
+	var p Pointer
+	p.raw = rawPtr
+	p.Address = address
+	return &p
+}
+func (this *Pointer) ReadByte() byte {
+	return this.raw[0]
 }
 
 func (this *Pointer) ReadQuarterWord(order binary.ByteOrder) (QuarterWord, error) {
 	var qw QuarterWord
-	err := binary.Read(this.buffer, order, &qw)
+	buf := bytes.NewReader(this.raw)
+	err := binary.Read(buf, order, &qw)
 	if err != nil {
 		qw = 0
 	}
@@ -45,7 +52,8 @@ func (this *Pointer) ReadQuarterWord(order binary.ByteOrder) (QuarterWord, error
 
 func (this *Pointer) ReadHalfWord(order binary.ByteOrder) (HalfWord, error) {
 	var hw HalfWord
-	err := binary.Read(this.buffer, order, &hw)
+	buf := bytes.NewReader(this.raw)
+	err := binary.Read(buf, order, &hw)
 	if err != nil {
 		hw = 0
 	}
@@ -54,7 +62,8 @@ func (this *Pointer) ReadHalfWord(order binary.ByteOrder) (HalfWord, error) {
 
 func (this *Pointer) ReadWord(order binary.ByteOrder) (Word, error) {
 	var w Word
-	err := binary.Read(this.buffer, order, &w)
+	buf := bytes.NewReader(this.raw)
+	err := binary.Read(buf, order, &w)
 	if err != nil {
 		w = 0
 	}
@@ -81,4 +90,30 @@ func (this *Pointer) ReadDouble(order binary.ByteOrder) (Double, error) {
 		d = 0.0
 	}
 	return d, err
+}
+
+func (this *Pointer) WriteByte(value byte) {
+	this.raw[0] = value
+}
+
+func (this *Pointer) WriteQuarterWord(value QuarterWord, order binary.ByteOrder) error {
+	buf := bytes.NewBuffer(this.raw)
+	return binary.Write(buf, order, value)
+}
+func (this *Pointer) WriteHalfWord(value HalfWord, order binary.ByteOrder) error {
+	buf := bytes.NewBuffer(this.raw)
+	return binary.Write(buf, order, value)
+}
+func (this *Pointer) WriteWord(value Word, order binary.ByteOrder) error {
+	buf := bytes.NewBuffer(this.raw)
+	return binary.Write(buf, order, value)
+}
+
+func (this *Pointer) WriteFloat(value Float, order binary.ByteOrder) error {
+	buf := bytes.NewBuffer(this.raw)
+	return binary.Write(buf, order, value)
+}
+func (this *Pointer) WriteDouble(value Double, order binary.ByteOrder) error {
+	buf := bytes.NewBuffer(this.raw)
+	return binary.Write(buf, order, value)
 }
