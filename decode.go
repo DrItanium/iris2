@@ -19,3 +19,39 @@
 
 // instruction decoder
 package iris2
+
+// Base Operation types
+const (
+	OperationInstruction = iota
+	OperationRegister
+	OperationImmediate
+)
+
+// Instruction types
+const (
+	Arithmetic = iota
+	Memory
+	ControlFlow
+	Linkage // how should we link with the next instruction
+)
+
+// Register types
+const (
+	RegisterInteger = iota
+	RegisterDouble
+	RegisterPointer
+	RegisterFloatUpper
+	RegisterFloatLower
+	RegisterFloatPacked
+	RegisterHalfWordUpper
+	RegisterHalfWordLower
+	RegisterHalfWordPacked
+)
+
+type InstructionField struct {
+	Description byte
+	Data        []byte
+}
+
+// an instruction is comprised of a series of fields
+type Instruction []InstructionField
