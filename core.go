@@ -21,8 +21,6 @@
 // architecture with typed instructions
 package iris2
 
-import "container/list"
-
 type MemorySpace []byte
 
 const (
@@ -34,7 +32,6 @@ const (
 type Core struct {
 	Registers [RegisterCount]Register
 	Memory    []byte
-	Spaces    *list.List
 }
 
 func NewCore(memorySize uint) *Core {
@@ -45,6 +42,5 @@ func NewCore(memorySize uint) *Core {
 	}
 	// construct the raw memory we are going to be using
 	c.Memory = make([]byte, memorySize)
-	c.Spaces = list.New()
 	return &c
 }
