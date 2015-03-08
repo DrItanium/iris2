@@ -117,3 +117,8 @@ func (this *Pointer) WriteDouble(value Double, order binary.ByteOrder) error {
 	buf := bytes.NewBuffer(this.raw)
 	return binary.Write(buf, order, value)
 }
+
+// Used for instruction parsing
+func (this *Pointer) ByteReader() *bytes.Reader {
+	return bytes.NewReader(this.raw)
+}
