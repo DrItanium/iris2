@@ -23,7 +23,6 @@ const (
 )
 
 type Register Word
-type RegisterFile [RegisterCount]Register
 
 func (this Register) UpperHalf() HalfWord {
 	return HalfWord(this >> 32)
@@ -61,4 +60,14 @@ func (this Register) Floats() []Float {
 		this.LowerHalf().Float(),
 		this.UpperHalf().Float(),
 	}
+}
+
+type RegisterFile []Register
+
+func NewRegisterFile(count uint) RegisterFile {
+	return make(RegisterFile, count)
+}
+
+func (this *RegisterFile) Subset(from, to uint) RegisterFile {
+	return (*this)[from:to]
 }
