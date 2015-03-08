@@ -21,25 +21,30 @@
 // architecture with typed instructions
 package iris2
 
-type Word uint64
+import "container/list"
+
+type MemorySpace []byte
 
 const (
-	RegisterCount = 256
+	RegisterCount      = 256
+	InstructionPointer = 0
+	StackPointer       = 1
 )
 
 type Core struct {
-	Registers [RegisterCount]Word
-	Code      []byte
-	Data      []byte
+	Registers [RegisterCount]Register
+	Memory    []byte
+	Spaces    *list.List
 }
 
-func NewCore(codeSize, dataSize uint) *Core {
+func NewCore(memorySize uint) *Core {
 	var c Core
 	// initialize the registers
 	for i := 0; i < RegisterCount; i++ {
 		c.Registers[i] = 0
 	}
-	c.Code = make([]byte, codeSize)
-	c.Data = make([]byte, dataSize)
+	// construct the raw memory we are going to be using
+	c.Memory = make([]byte, memorySize)
+	c.Spaces = list.New()
 	return &c
 }
