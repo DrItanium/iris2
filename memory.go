@@ -17,24 +17,18 @@
 // 3. This notice may not be removed or altered from any source distribution.
 //
 
-// declaration of the iris2 core, a 64-bit variable length instruction vliw
-// architecture with typed instructions
+// declaration of the iris2 memory layout
 package iris2
 
-type Core struct {
-	//	Registers [RegisterCount]Register
-	Memory []byte
-}
+// Memory is laid out as a series of spaces (which are slices). This makes it really easy to simulate NUMA designs where we have multiple discontiguous memory spaces
+// The actual design of memory itself is abstracted through the use of the memory spaces and is up to the memory controller to actually manage things like address translation
+// The simplest design will have a single memory space
+type MemorySpace []byte
 
-func NewCore(memorySize uint) *Core {
-	var c Core
-	// initialize the registers
-	/*
-		for i := 0; i < RegisterCount; i++ {
-			c.Registers[i] = 0
-		}
-	*/
-	// construct the raw memory we are going to be using
-	c.Memory = make([]byte, memorySize)
-	return &c
+// Returns slice for a given address within this space. The external address is not the spaceAddress in cases with multiple memory spaces
+func (this MemorySpace) RawPointer(spaceAddress Word) []byte {
+	return this[spaceAddress:]
+}
+func (this MemorySpace) BoundedRawPointer(spaceAddressBegin, spaceAddressEnd Word) []byte {
+	return this[spaceAddressBegin:spaceAddressEnd]
 }
