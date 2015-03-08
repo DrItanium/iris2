@@ -17,23 +17,29 @@
 // 3. This notice may not be removed or altered from any source distribution.
 //
 
-// declaration of the iris64 core
-package iris
+// declaration of the iris2 core, a 64-bit variable length instruction vliw
+// architecture with typed instructions
+package iris2
 
 type Word uint64
-type RegisterType byte
-type MemorySpace *byte
-
-// Registers are type tagged
-type Register struct {
-	Type RegisterType
-	Data Word
-}
 
 const (
 	RegisterCount = 256
 )
 
 type Core struct {
-	Registers [RegisterCount]Register
+	Registers [RegisterCount]Word
+	Code      []byte
+	Data      []byte
+}
+
+func NewCore(codeSize, dataSize uint) *Core {
+	var c Core
+	// initialize the registers
+	for i := 0; i < RegisterCount; i++ {
+		c.Registers[i] = 0
+	}
+	c.Code = make([]byte, codeSize)
+	c.Data = make([]byte, dataSize)
+	return &c
 }

@@ -17,5 +17,5 @@
 // 3. This notice may not be removed or altered from any source distribution.
 //
 
-// declaration of the iris64 exposed instruction format
-package iris
+// declaration of the iris2
+package iris2
