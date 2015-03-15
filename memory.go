@@ -32,3 +32,6 @@ func (this MemorySpace) RawPointer(spaceAddress Word) []byte {
 func (this MemorySpace) BoundedRawPointer(spaceAddressBegin, spaceAddressEnd Word) []byte {
 	return this[spaceAddressBegin:spaceAddressEnd]
 }
+
+type MemoryController interface {
+}
