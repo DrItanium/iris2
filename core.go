@@ -24,18 +24,5 @@ package iris2
 type Core interface {
 	RegisterFile
 	MemorySpace
+	InstructionDecoder
 }
-
-/*
-func NewCore(registerCount uint, memory *MemorySpace) *Core {
-	var c Core
-	c.Registers = NewRegisterFile(registerCount)
-	// initialize the registers
-	for i := 0; i < len(c.Registers); i++ {
-		c.Registers[i] = 0
-	}
-	// construct the raw memory we are going to be using
-	c.Memory = make(MemorySpace, memorySize)
-	return &c
-}
-*/
