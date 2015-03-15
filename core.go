@@ -23,17 +23,17 @@ package iris2
 
 type Core struct {
 	//	Registers [RegisterCount]Register
-	Memory []byte
+	Registers RegisterFile
+	Memory    []byte
 }
 
-func NewCore(memorySize uint) *Core {
+func NewCore(registerCount, memorySize uint) *Core {
 	var c Core
+	c.Registers = NewRegisterFile(registerCount)
 	// initialize the registers
-	/*
-		for i := 0; i < RegisterCount; i++ {
-			c.Registers[i] = 0
-		}
-	*/
+	for i := 0; i < len(c.Registers); i++ {
+		c.Registers[i] = 0
+	}
 	// construct the raw memory we are going to be using
 	c.Memory = make([]byte, memorySize)
 	return &c
