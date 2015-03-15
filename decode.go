@@ -17,11 +17,32 @@
 // 3. This notice may not be removed or altered from any source distribution.
 //
 
-// instruction decoder
+// generic instruction decoder
 package iris2
 
+type InstructionDecoder interface {
+	Decode(ptr *Pointer) (*Instruction, *Pointer, error)
+}
 type Instruction interface {
 	ByteConvertible
 	RawRepresentation() RawInstruction
+	Fields() []InstructionField
 }
 type RawInstruction []byte
+type InstructionField []byte
+
+func (this RawInstruction) Bytes() []byte {
+	return []byte(this)
+}
+
+func (this RawInstruction) RawRepresentation() RawInstruction {
+	return this
+}
+
+func (this RawInstruction) Fields() []InstructionField {
+	contents := make([]InstructionField, len(this))
+	for i := 0; i < len(this); i++ {
+		contents[i] = InstructionField(this[i : i+1])
+	}
+	return contents
+}
