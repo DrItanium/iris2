@@ -21,13 +21,13 @@
 // architecture with typed instructions
 package iris2
 
-type Core struct {
-	//	Registers [RegisterCount]Register
-	Registers RegisterFile
-	Memory    []byte
+type Core interface {
+	RegisterFile
+	MemorySpace
 }
 
-func NewCore(registerCount, memorySize uint) *Core {
+/*
+func NewCore(registerCount uint, memory *MemorySpace) *Core {
 	var c Core
 	c.Registers = NewRegisterFile(registerCount)
 	// initialize the registers
@@ -35,6 +35,7 @@ func NewCore(registerCount, memorySize uint) *Core {
 		c.Registers[i] = 0
 	}
 	// construct the raw memory we are going to be using
-	c.Memory = make([]byte, memorySize)
+	c.Memory = make(MemorySpace, memorySize)
 	return &c
 }
+*/
