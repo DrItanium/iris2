@@ -28,6 +28,10 @@ type Word uint64
 type HalfWord uint32
 type QuarterWord uint16
 
+type ByteConvertible interface {
+	Bytes() []byte
+}
+
 func (this Word) Double() Double {
 	return Double(math.Float64frombits(uint64(this)))
 }
