@@ -18,9 +18,7 @@
 //
 package iris2
 
-const (
-	RegisterCount = 256
-)
+import "fmt"
 
 type Register Word
 
@@ -62,12 +60,29 @@ func (this Register) Floats() []Float {
 	}
 }
 
-type RegisterFile []Register
+type RegisterFile interface {
+	Register(index Word) (*Register, error)
+	Subset(from, to Word) (RegisterFile, error)
+	RegisterCount() Word
+}
+type BasicRegisterFile []Register
 
-func NewRegisterFile(count uint) RegisterFile {
-	return make(RegisterFile, count)
+func NewBasicRegisterFile(count Word) RegisterFile {
+	return make(BasicRegisterFile, count)
 }
 
-func (this *RegisterFile) Subset(from, to uint) RegisterFile {
-	return (*this)[from:to]
+func (this BasicRegisterFile) Subset(from, to Word) (RegisterFile, error) {
+	if from < to {
+		return nil, fmt.Errorf("from is greater than to (%d > %d)", from, to)
+	}
+	return BasicRegisterFile((this)[from:to]), nil
+}
+func (this BasicRegisterFile) RegisterCount() Word {
+	return Word(len(this))
+}
+func (this BasicRegisterFile) Register(index Word) (*Register, error) {
+	if index >= Word(len(this)) {
+		return nil, fmt.Errorf("Attempted to get register %d which is out of range!", index)
+	}
+	return &(this[index]), nil
 }
