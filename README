@@ -1,0 +1,2 @@
+Iris2 is a second generation iris core which has been extended from 16 bits to 
+64-bits. The number of registers is customizable as is the layout of memory. 
