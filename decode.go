@@ -21,7 +21,7 @@
 package iris2
 
 type InstructionDecoder interface {
-	Decode(ptr *Pointer) (*Instruction, *Pointer, error)
+	Decode(ptr *Pointer) (Instruction, *Pointer, error)
 }
 type Instruction interface {
 	ByteConvertible
