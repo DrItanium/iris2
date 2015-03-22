@@ -29,8 +29,8 @@ import (
 // The simplest design will have a single memory space
 type MemorySpace interface {
 	MemorySize() Word
-	PointerAt(address Word) (*Pointer, error)
-	BoundedPointerAt(address, size Word) (*Pointer, error)
+	PointerAt(address Word) (Pointer, error)
+	BoundedPointerAt(address, size Word) (Pointer, error)
 	Subspace(start Word) (MemorySpace, error)
 	BoundedSubspace(start, end Word) (MemorySpace, error)
 }
@@ -49,15 +49,15 @@ func (this SimpleMemorySpace) MemorySize() Word {
 	return Word(len(this))
 }
 
-func (this SimpleMemorySpace) PointerAt(address Word) (*Pointer, error) {
+func (this SimpleMemorySpace) PointerAt(address Word) (Pointer, error) {
 	if address >= Word(len(this)) {
 		return nil, fmt.Errorf("Provided address %d is out of range!", address)
 	} else {
-		return NewPointer(this[address:], address), nil
+		return NewStandardPointer(this[address:], address), nil
 	}
 }
 
-func (this SimpleMemorySpace) BoundedPointerAt(address, size Word) (*Pointer, error) {
+func (this SimpleMemorySpace) BoundedPointerAt(address, size Word) (Pointer, error) {
 	if address >= Word(len(this)) {
 		return nil, fmt.Errorf("Provided address %d is out of range!", address)
 	}
@@ -67,5 +67,11 @@ func (this SimpleMemorySpace) BoundedPointerAt(address, size Word) (*Pointer, er
 		return nil, fmt.Errorf("Provided bounding size %d is too big!", size)
 	}
 
-	return NewPointer(this[address:(address+size)], address), nil
+	return NewStandardPointer(this[address:(address+size)], address), nil
+}
+
+type MemoryMappedIO struct {
+	C             chan []byte
+	MappedAddress Word
+	Size          Word
 }

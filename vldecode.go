@@ -20,7 +20,7 @@
 // variable-length decoder
 package iris2
 
-import "fmt"
+//import "fmt"
 
 type VariableLengthInstruction struct {
 	Contents []InstructionField
@@ -46,6 +46,7 @@ func (this *VariableLengthInstruction) RawRepresentation() RawInstruction {
 // That means that we will consume at most 28 bytes or four fields
 type VariableLengthDecoder_Type0 struct{}
 
+/*
 func (this *VariableLengthDecoder_Type0) Decode(ptr *Pointer) (Instruction, *Pointer, error) {
 	// the first byte is used to describe the operation
 	var vli VariableLengthInstruction
@@ -62,3 +63,4 @@ func (this *VariableLengthDecoder_Type0) Decode(ptr *Pointer) (Instruction, *Poi
 	}
 	return &vli, ptr, nil
 }
+*/

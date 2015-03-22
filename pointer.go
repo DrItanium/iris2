@@ -25,22 +25,43 @@ import (
 	"encoding/binary"
 )
 
-type Pointer struct {
-	raw     []byte
-	Address Word
+type Pointer interface {
+	Address() Word
+	ReadByte() byte
+	ReadQuarterWord(binary.ByteOrder) (QuarterWord, error)
+	ReadHalfWord(binary.ByteOrder) (HalfWord, error)
+	ReadWord(binary.ByteOrder) (Word, error)
+	ReadFloat(binary.ByteOrder) (Float, error)
+	ReadDouble(binary.ByteOrder) (Double, error)
+	WriteByte(byte)
+	WriteQuarterWord(QuarterWord, binary.ByteOrder) error
+	WriteHalfWord(HalfWord, binary.ByteOrder) error
+	WriteWord(Word, binary.ByteOrder) error
+	WriteFloat(Float, binary.ByteOrder) error
+	WriteDouble(Double, binary.ByteOrder) error
+	// Used for instruction parsing
+	ByteReader() *bytes.Reader
 }
 
-func NewPointer(rawPtr []byte, address Word) *Pointer {
-	var p Pointer
+type StandardPointer struct {
+	raw             []byte
+	StartingAddress Word
+}
+
+func NewStandardPointer(rawPtr []byte, address Word) *StandardPointer {
+	var p StandardPointer
 	p.raw = rawPtr
-	p.Address = address
+	p.StartingAddress = address
 	return &p
 }
-func (this *Pointer) ReadByte() byte {
+func (this *StandardPointer) Address() Word {
+	return this.StartingAddress
+}
+func (this *StandardPointer) ReadByte() byte {
 	return this.raw[0]
 }
 
-func (this *Pointer) ReadQuarterWord(order binary.ByteOrder) (QuarterWord, error) {
+func (this *StandardPointer) ReadQuarterWord(order binary.ByteOrder) (QuarterWord, error) {
 	var qw QuarterWord
 	buf := bytes.NewReader(this.raw)
 	err := binary.Read(buf, order, &qw)
@@ -50,7 +71,7 @@ func (this *Pointer) ReadQuarterWord(order binary.ByteOrder) (QuarterWord, error
 	return qw, err
 }
 
-func (this *Pointer) ReadHalfWord(order binary.ByteOrder) (HalfWord, error) {
+func (this *StandardPointer) ReadHalfWord(order binary.ByteOrder) (HalfWord, error) {
 	var hw HalfWord
 	buf := bytes.NewReader(this.raw)
 	err := binary.Read(buf, order, &hw)
@@ -60,7 +81,7 @@ func (this *Pointer) ReadHalfWord(order binary.ByteOrder) (HalfWord, error) {
 	return hw, err
 }
 
-func (this *Pointer) ReadWord(order binary.ByteOrder) (Word, error) {
+func (this *StandardPointer) ReadWord(order binary.ByteOrder) (Word, error) {
 	var w Word
 	buf := bytes.NewReader(this.raw)
 	err := binary.Read(buf, order, &w)
@@ -70,7 +91,7 @@ func (this *Pointer) ReadWord(order binary.ByteOrder) (Word, error) {
 	return w, err
 }
 
-func (this *Pointer) ReadFloat(order binary.ByteOrder) (Float, error) {
+func (this *StandardPointer) ReadFloat(order binary.ByteOrder) (Float, error) {
 	var f Float
 	result, err := this.ReadHalfWord(order)
 	if err == nil {
@@ -81,7 +102,7 @@ func (this *Pointer) ReadFloat(order binary.ByteOrder) (Float, error) {
 	return f, err
 }
 
-func (this *Pointer) ReadDouble(order binary.ByteOrder) (Double, error) {
+func (this *StandardPointer) ReadDouble(order binary.ByteOrder) (Double, error) {
 	var d Double
 	result, err := this.ReadWord(order)
 	if err == nil {
@@ -92,33 +113,33 @@ func (this *Pointer) ReadDouble(order binary.ByteOrder) (Double, error) {
 	return d, err
 }
 
-func (this *Pointer) WriteByte(value byte) {
+func (this *StandardPointer) WriteByte(value byte) {
 	this.raw[0] = value
 }
 
-func (this *Pointer) WriteQuarterWord(value QuarterWord, order binary.ByteOrder) error {
+func (this *StandardPointer) WriteQuarterWord(value QuarterWord, order binary.ByteOrder) error {
 	buf := bytes.NewBuffer(this.raw)
 	return binary.Write(buf, order, value)
 }
-func (this *Pointer) WriteHalfWord(value HalfWord, order binary.ByteOrder) error {
+func (this *StandardPointer) WriteHalfWord(value HalfWord, order binary.ByteOrder) error {
 	buf := bytes.NewBuffer(this.raw)
 	return binary.Write(buf, order, value)
 }
-func (this *Pointer) WriteWord(value Word, order binary.ByteOrder) error {
+func (this *StandardPointer) WriteWord(value Word, order binary.ByteOrder) error {
 	buf := bytes.NewBuffer(this.raw)
 	return binary.Write(buf, order, value)
 }
 
-func (this *Pointer) WriteFloat(value Float, order binary.ByteOrder) error {
+func (this *StandardPointer) WriteFloat(value Float, order binary.ByteOrder) error {
 	buf := bytes.NewBuffer(this.raw)
 	return binary.Write(buf, order, value)
 }
-func (this *Pointer) WriteDouble(value Double, order binary.ByteOrder) error {
+func (this *StandardPointer) WriteDouble(value Double, order binary.ByteOrder) error {
 	buf := bytes.NewBuffer(this.raw)
 	return binary.Write(buf, order, value)
 }
 
 // Used for instruction parsing
-func (this *Pointer) ByteReader() *bytes.Reader {
+func (this *StandardPointer) ByteReader() *bytes.Reader {
 	return bytes.NewReader(this.raw)
 }
