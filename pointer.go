@@ -118,25 +118,25 @@ func (this *StandardPointer) WriteByte(value byte) {
 }
 
 func (this *StandardPointer) WriteQuarterWord(value QuarterWord, order binary.ByteOrder) error {
-	buf := bytes.NewBuffer(this.raw)
-	return binary.Write(buf, order, value)
+	order.PutUint16(this.raw, uint16(value))
+	return nil
 }
 func (this *StandardPointer) WriteHalfWord(value HalfWord, order binary.ByteOrder) error {
-	buf := bytes.NewBuffer(this.raw)
-	return binary.Write(buf, order, value)
+	order.PutUint32(this.raw, uint32(value))
+	return nil
 }
 func (this *StandardPointer) WriteWord(value Word, order binary.ByteOrder) error {
-	buf := bytes.NewBuffer(this.raw)
-	return binary.Write(buf, order, value)
+	order.PutUint64(this.raw, uint64(value))
+	return nil
 }
 
 func (this *StandardPointer) WriteFloat(value Float, order binary.ByteOrder) error {
-	buf := bytes.NewBuffer(this.raw)
-	return binary.Write(buf, order, value)
+	order.PutUint32(this.raw, uint32(value.BinaryRepresentation()))
+	return nil
 }
 func (this *StandardPointer) WriteDouble(value Double, order binary.ByteOrder) error {
-	buf := bytes.NewBuffer(this.raw)
-	return binary.Write(buf, order, value)
+	order.PutUint64(this.raw, uint64(value.BinaryRepresentation()))
+	return nil
 }
 
 // Used for instruction parsing
