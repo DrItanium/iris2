@@ -21,6 +21,12 @@ package iris2
 
 import "testing"
 
-func TestCoreInitialize(t *testing.T) {
-
+func TestCoreInitialize_FirstGen(t *testing.T) {
+	core := NewFirstGenCore(Megabyte(64))
+	for i := 0; i < len(core.Code); i++ {
+		core.Code[i] = byte(i)
+	}
+	for i := 0; i < len(core.Data); i++ {
+		core.Data[i] = byte(i)
+	}
 }

@@ -21,34 +21,33 @@
 package iris2
 
 type FirstGenCore struct {
-	Registers   [256]Word
-	OnDieMemory SimpleMemorySpace // memory + pointers
-	Code, Data  MemorySpace
+	Registers                 [256]Word
+	OnDieMemory               SimpleMemorySpace // memory + pointers
+	Code, Data, IO, Microcode MemorySpace
 }
 
-func megabyte(count Word) Word {
-	return 1024 * kilobyte(count)
+func Gigabyte(count Word) Word {
+	return 1024 * Megabyte(count)
 }
-func kilobyte(count Word) Word {
+func Megabyte(count Word) Word {
+	return 1024 * Kilobyte(count)
+}
+func Kilobyte(count Word) Word {
 	return 1024 * count
 }
-func NewFirstGenCore(byteCount Word) (*FirstGenCore, error) {
+func NewFirstGenCore(byteCount Word) *FirstGenCore {
 	var core FirstGenCore
 	for i := 0; i < 256; i++ {
 		core.Registers[i] = 0
 	}
-	core.OnDieMemory = make(SimpleMemorySpace, byteCount)
-	ptr0, err0 := core.OnDieMemory.BoundedSubspace(0, byteCount/2)
-	if err0 != nil {
-		return nil, err0
-	} else {
-		core.Code = ptr0
-	}
-	ptr1, err1 := core.OnDieMemory.Subspace(byteCount / 2)
-	if err1 != nil {
-		return nil, err1
-	} else {
-		core.Data = ptr1
-	}
-	return &core, nil
+	core.OnDieMemory = make([]byte, byteCount)
+	core.Code = core.OnDieMemory[0 : byteCount/4]
+	core.Data = core.OnDieMemory[byteCount/4 : byteCount/2]
+	core.Stack = core.OnDieMemory[byteCount/2 : (byteCount*3)/4]
+	core.IO = core
+	return &core
+}
+
+type KeyboardController struct {
+	CurrentData rune
 }
